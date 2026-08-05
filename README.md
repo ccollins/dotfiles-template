@@ -1,5 +1,7 @@
 # dotfiles-template
 
+[![ci](https://github.com/ccollins/dotfiles-template/actions/workflows/ci.yml/badge.svg)](https://github.com/ccollins/dotfiles-template/actions/workflows/ci.yml)
+
 A minimal, opinionated starting point for a **macOS/Linux dotfiles repo** managed with
 [GNU stow](https://www.gnu.org/software/stow/) and [Oh My Zsh](https://ohmyz.sh), with the
 [`dotfiles-update`](https://github.com/ccollins/dotfiles-update) plugin baked in so your
