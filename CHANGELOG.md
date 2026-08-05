@@ -1,0 +1,20 @@
+# Changelog
+
+All notable changes to this template are documented here. The format is based on
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+### Added
+- Stow + Oh My Zsh dotfiles starter with the
+  [`dotfiles-update`](https://github.com/ccollins/dotfiles-update) plugin baked in
+  (startup drift/update signals, `dotfiles-update` / `dotfiles-apply`).
+- App-managed-config reconcile pattern: a `reconcile-managed` list wired into
+  `bootstrap.sh` and the post-stow `dotfiles-apply-hook`, using the plugin's
+  `merge-managed-json` / `capture-managed-json` engine. Documented with Claude Code's
+  `settings.json` (per-machine model) as the worked example.
+- CI: shellcheck + syntax lint.
+
+### Changed
+- The reconcile engine is no longer vendored in the template; it ships with the
+  `dotfiles-update` plugin (installed by `bootstrap.sh`), so there is a single source.
