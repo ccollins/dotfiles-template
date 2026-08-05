@@ -4,3 +4,4 @@
 brew "stow"       # symlink manager used to "install" these dotfiles
 brew "gh"         # GitHub CLI (optional; handy for the PR workflow)
 brew "coreutils"  # provides gtimeout on macOS, which bounds the update check
+brew "jq"         # used by merge-managed-json (app-managed config reconcile)

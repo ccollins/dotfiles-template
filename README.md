@@ -93,14 +93,56 @@ history even solo:
 This is optional; commit straight to `main` if you prefer. Either way, the update check
 keeps every machine you own honest about which commit is actually installed.
 
+## Reconciling app-managed config files
+
+Some tools **own and rewrite their own config** — think an editor or CLI that persists
+your model/account/UI choices back to disk. You can't just `stow` a tracked copy in:
+the app's edits fight git, and machine-specific choices (e.g. a per-laptop model or
+account) would propagate to every machine.
+
+The template ships a small, **tool-agnostic** pattern for this:
+
+- **`bin/.local/bin/merge-managed-json`** — the engine. Given a tracked *base* file, the
+  *live* file the app rewrites, and a list of **machine-local keys**, it regenerates the
+  live file: base wins for shared keys, and the machine-local keys are preserved from
+  whatever the app last wrote.
+- **`bin/.local/bin/reconcile-managed`** — *your* list. Add one `merge-managed-json` line
+  per managed file. It runs at install (`bootstrap.sh`) and on every `dotfiles-apply`
+  (via the `dotfiles-apply-hook` in `shell/.zshrc`), so one edit keeps every machine
+  reconciled.
+
+### Example — Claude Code's `~/.claude/settings.json`
+
+Claude Code rewrites `~/.claude/settings.json` (via `/model`, `/config`). To share
+plugins/theme but keep the **per-machine `model`** out of git:
+
+```sh
+# 1. Track the shared half (everything except model):
+mkdir -p claude
+jq 'del(.model)' ~/.claude/settings.json > claude/settings.base.json
+
+# 2. In bin/.local/bin/reconcile-managed, add:
+merge-managed-json "$DOTFILES/claude/settings.base.json" \
+                   "$HOME/.claude/settings.json" model
+```
+
+Now `/model` on any machine stays local and never commits; shared plugins flow via the
+base. Add more preserved keys by listing them: `... settings.json model theme`.
+
+Don't use this? Delete `bin/.local/bin/merge-managed-json`, `reconcile-managed`, the
+`dotfiles-apply-hook` in `shell/.zshrc`, and the reconcile step in `bootstrap.sh`.
+
 ## Layout
 
 ```
 .
-├── bootstrap.sh      # idempotent setup: brew, OMZ, plugin, stow, marker
+├── bootstrap.sh      # idempotent setup: brew, OMZ, plugin, stow, marker, reconcile
 ├── Brewfile          # Homebrew packages (edit me)
 ├── shell/.zshrc      # example zshrc wired to the plugin (edit me)
 ├── git/.gitconfig    # identity + sane git defaults (edit me)
+├── bin/.local/bin/
+│   ├── merge-managed-json  # generic app-managed-config reconcile engine
+│   └── reconcile-managed   # your list of managed files (edit me)
 └── .gitignore        # ignores ~/.zshrc.local and .DS_Store
 ```
 
