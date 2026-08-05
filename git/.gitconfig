@@ -1,0 +1,11 @@
+[user]
+	# TODO: set your identity
+	name = Your Name
+	email = you@example.com
+
+[init]
+	defaultBranch = main
+
+[pull]
+	# The update workflow fast-forwards main; keep pulls clean.
+	ff = only
