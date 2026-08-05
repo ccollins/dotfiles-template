@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# reconcile-managed — reconcile every app-managed config file on this machine.
+#
+# This is YOUR list. Add one `merge-managed-json` line per app-managed JSON file
+# (see that script for the pattern). Called by bootstrap.sh (install time) and by
+# the dotfiles-apply-hook in shell/.zshrc (on `dotfiles-apply`), so editing here is
+# the single place that keeps every machine's managed configs reconciled.
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+
+# Make the sibling `merge-managed-json` resolvable even when ~/.local/bin isn't on
+# PATH yet (e.g. when bootstrap.sh calls this at install time).
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+PATH="$HERE:$PATH"
+
+# --- your app-managed files -------------------------------------------------
+# Uncomment / add lines. Nothing is reconciled by default.
+#
+# Claude Code — track shared plugins/theme, keep the per-machine `model` out of git:
+#   merge-managed-json "$DOTFILES/claude/settings.base.json" \
+#                      "$HOME/.claude/settings.json" model
+#
+# (Delete this whole file, bin/.local/bin/merge-managed-json, the apply-hook in
+#  shell/.zshrc, and the reconcile step in bootstrap.sh if you don't need any of it.)
+
+:  # no-op so the script succeeds with an empty list

@@ -6,7 +6,7 @@ DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Stow packages (top-level dirs) to link into $HOME. Add your own here, and keep
 # this in sync with DOTFILES_PACKAGES in shell/.zshrc.
-PACKAGES=(shell git)
+PACKAGES=(shell git bin)
 
 # The dotfiles-update zsh plugin — the update/apply mechanism.
 PLUGIN_REPO="https://github.com/ccollins/dotfiles-update"
@@ -62,6 +62,16 @@ CACHE="${ZSH_CACHE_DIR:-$HOME/.oh-my-zsh/cache}"
 mkdir -p "$CACHE"
 if git -C "$DOTFILES_DIR" rev-parse HEAD > "$CACHE/.dotfiles-installed" 2>/dev/null; then
   success "Recorded installed commit"
+fi
+
+# --- Reconcile app-managed config files --------------------------------------
+# For configs an app owns/rewrites (so they can't be stowed), regenerate them from
+# a tracked base while preserving machine-local keys. Edit the list in
+# bin/.local/bin/reconcile-managed. No-op until you add entries.
+if command -v jq &>/dev/null; then
+  DOTFILES="$DOTFILES_DIR" "$DOTFILES_DIR/bin/.local/bin/reconcile-managed" && success "Reconciled managed configs"
+else
+  warn "jq not found — skipped managed-config reconcile (brew install jq, then re-run)"
 fi
 
 # --- Optional: machine-local secrets -----------------------------------------
