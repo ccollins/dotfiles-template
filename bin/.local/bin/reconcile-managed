@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 # reconcile-managed — reconcile every app-managed config file on this machine.
 #
-# This is YOUR list. Add one `merge-managed-json` line per app-managed JSON file
-# (see that script for the pattern). Called by bootstrap.sh (install time) and by
-# the dotfiles-apply-hook in shell/.zshrc (on `dotfiles-apply`), so editing here is
-# the single place that keeps every machine's managed configs reconciled.
+# This is YOUR list. Add one `merge-managed-json` line per app-managed JSON file.
+# Called by bootstrap.sh (install time) and by the dotfiles-apply-hook in
+# shell/.zshrc (on `dotfiles-apply`), so editing here is the single place that keeps
+# every machine reconciled.
+#
+# The engine (merge-managed-json / capture-managed-json) ships with the
+# dotfiles-update plugin, which bootstrap.sh installs — it isn't vendored here.
 set -euo pipefail
 
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 
-# Make the sibling `merge-managed-json` resolvable even when ~/.local/bin isn't on
-# PATH yet (e.g. when bootstrap.sh calls this at install time).
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-PATH="$HERE:$PATH"
+# The plugin's bundled tools (an interactive shell already has them on PATH; add
+# them explicitly so bootstrap's non-interactive run does too).
+PLUGIN_BIN="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/dotfiles-update/bin"
+[ -d "$PLUGIN_BIN" ] && PATH="$PLUGIN_BIN:$PATH"
 
 # --- your app-managed files -------------------------------------------------
 # Uncomment / add lines. Nothing is reconciled by default.
@@ -20,8 +23,11 @@ PATH="$HERE:$PATH"
 # Claude Code — track shared plugins/theme, keep the per-machine `model` out of git:
 #   merge-managed-json "$DOTFILES/claude/settings.base.json" \
 #                      "$HOME/.claude/settings.json" model
+#   # after enabling a plugin in-app, promote it back into the base:
+#   capture-managed-json "$DOTFILES/claude/settings.base.json" \
+#                        "$HOME/.claude/settings.json" model
 #
-# (Delete this whole file, bin/.local/bin/merge-managed-json, the apply-hook in
-#  shell/.zshrc, and the reconcile step in bootstrap.sh if you don't need any of it.)
+# (Delete this file, the apply-hook in shell/.zshrc, and the reconcile step in
+#  bootstrap.sh if you don't manage any app-owned config.)
 
 :  # no-op so the script succeeds with an empty list
