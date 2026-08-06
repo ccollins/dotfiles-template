@@ -78,8 +78,14 @@ Full plugin docs and options: **https://github.com/ccollins/dotfiles-update**
 
 ## Commands
 
-- **`dotfiles-update`** — fast-forward pull `main`, then apply.
-- **`dotfiles-apply`** — restow every package and record the installed commit.
+- **`dotfiles status`** — on-demand state of every axis; **`dotfiles doctor`** — health check.
+- **`dotfiles update`** — fast-forward pull `main`, then apply.
+- **`dotfiles apply`** — restow every package and record the installed commit.
+- **`dotfiles vendored`** — check any vendored (pinned) copies for upstream updates; point
+  `DOTFILES_VENDORED_DIRS` at the dirs holding your `.vendor` files (see the
+  [plugin README](https://github.com/ccollins/dotfiles-update#checking-vendored-dependencies)).
+
+Run `dotfiles help` for the full list.
 
 ## A suggested workflow for `main`
 
