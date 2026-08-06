@@ -7,6 +7,9 @@ export PATH="$HOME/.local/bin:$PATH"
 # =============================================================================
 export DOTFILES="$HOME/dotfiles"          # adjust if you clone elsewhere
 DOTFILES_PACKAGES=(shell git bin)         # keep in sync with PACKAGES in bootstrap.sh
+# Dirs holding vendored (pinned) copies with a <name>/.vendor file, so
+# `dotfiles vendored` can check them for upstream updates. Uncomment / adjust:
+# DOTFILES_VENDORED_DIRS=("$DOTFILES/skills")
 
 # prompt (default) | auto | reminder | disabled
 zstyle ':dotfiles:update' mode      prompt    # pulling remote updates
