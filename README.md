@@ -63,7 +63,7 @@ The plugin surfaces three independent signals for `~/dotfiles`:
 |--------|---------|-----|
 | ⚠ uncommitted / unpushed | local work not saved/pushed | `git commit` / `git push` |
 | ⬇ not applied | `HEAD` moved past what you last installed | `dotfiles-apply` |
-| ⬆ update available | remote branch is ahead of local | `dotfiles-update` |
+| ⬆ update available | remote branch is ahead of local | `dotfiles-update` (prints a changelog of what it pulled) |
 
 Each of the last two obeys a **mode** — `prompt` (default), `auto`, `reminder`, or
 `disabled` — set in `shell/.zshrc`:
@@ -81,6 +81,9 @@ Full plugin docs and options: **https://github.com/ccollins/dotfiles-update**
 - **`dotfiles status`** — on-demand state of every axis; **`dotfiles doctor`** — health check.
 - **`dotfiles update`** — fast-forward pull `main`, then apply.
 - **`dotfiles apply`** — restow every package and record the installed commit.
+- **`dotfiles changelog`** shows what changed, grouped and tagged by scope. `dotfiles
+  update` prints it automatically after a pull, so you see the commits you just picked
+  up instead of a bare "updated" line.
 - **`dotfiles vendored`** — check any vendored (pinned) copies for upstream updates; point
   `DOTFILES_VENDORED_DIRS` at the dirs holding your `.vendor` files (see the
   [plugin README](https://github.com/ccollins/dotfiles-update#checking-vendored-dependencies)).
@@ -100,6 +103,34 @@ history even solo:
 
 This is optional; commit straight to `main` if you prefer. Either way, the update check
 keeps every machine you own honest about which commit is actually installed.
+
+### Write PR titles as `<scope>: <subject>`
+
+If you squash-merge, the PR title becomes the commit subject verbatim, plus `(#N)`. That
+one string is what `git log` shows forever and what `dotfiles changelog` prints when you
+pull on another machine. Branch commit messages are discarded by the squash, so the title
+is the only part worth writing carefully.
+
+Prefix it with the stow package or top-level path you touched:
+
+```
+shell: fold the fzf keybindings in behind a guard
+git: add the Heroku credential helper
+brewfile: drop the built-in VSCode extensions
+docs: explain the not-applied signal
+```
+
+Two rules make the tags land:
+
+- **One lowercase token, no spaces.** A multi-word prefix (`Shell config: ...`) is not
+  read as a scope, and the changelog leaves that row's tag blank.
+- **Start the subject lowercase**; the changelog capitalizes it for you.
+
+`docs:` and `fix:` are [Conventional Commit](https://www.conventionalcommits.org) types,
+so the changelog files them under their own `Documentation:` and `Bug fixes:` headings
+instead of one flat list. You don't have to adopt Conventional Commits to benefit here: a
+plain `<package>: <subject>` prefix is enough to get a readable, scannable changelog, and
+a repo that uses no prefix at all still gets one clean list.
 
 ## Reconciling app-managed config files
 
