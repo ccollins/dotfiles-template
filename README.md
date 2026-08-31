@@ -120,6 +120,19 @@ brewfile: drop the built-in VSCode extensions
 docs: explain the not-applied signal
 ```
 
+**Set your repo to use the PR title first.** GitHub's default for squash merges is
+`COMMIT_OR_PR_TITLE`, which uses the *branch commit's* message whenever the branch has
+exactly one commit. On that default, a branch you committed as `wip` lands on `main` as
+`wip (#12)` and the title you wrote is thrown away. Fix it once per repo:
+
+```bash
+gh api -X PATCH repos/<you>/<your-dotfiles> \
+  -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
+```
+
+(Settings → General → Pull Requests → "Default to PR title for squash merge commits" does
+the same thing.)
+
 Two rules make the tags land:
 
 - **One lowercase token, no spaces.** A multi-word prefix (`Shell config: ...`) is not
