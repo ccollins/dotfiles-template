@@ -9,6 +9,8 @@ All notable changes to this template are documented here. The format is based on
 - README: `dotfiles changelog` in the command list, and a **Write PR titles as
   `<scope>: <subject>`** section explaining why the PR title is the only part of a
   squash-merged branch that survives, and what makes the changelog's scope tags land.
+- README: the `squash_merge_commit_title=PR_TITLE` repo setting, without which GitHub
+  discards the PR title on any single-commit branch.
 - Stow + Oh My Zsh dotfiles starter with the
   [`dotfiles-update`](https://github.com/ccollins/dotfiles-update) plugin baked in
   (startup drift/update signals, `dotfiles-update` / `dotfiles-apply`).
