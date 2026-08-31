@@ -11,6 +11,8 @@ All notable changes to this template are documented here. The format is based on
   squash-merged branch that survives, and what makes the changelog's scope tags land.
 - README: the `squash_merge_commit_title=PR_TITLE` repo setting, without which GitHub
   discards the PR title on any single-commit branch.
+- README: how to enforce the suggested `main` workflow with a ruleset (PRs required,
+  squash only, no force-push or deletion), since template-created repos inherit none.
 - Stow + Oh My Zsh dotfiles starter with the
   [`dotfiles-update`](https://github.com/ccollins/dotfiles-update) plugin baked in
   (startup drift/update signals, `dotfiles-update` / `dotfiles-apply`).
