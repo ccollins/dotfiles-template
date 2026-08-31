@@ -104,6 +104,39 @@ history even solo:
 This is optional; commit straight to `main` if you prefer. Either way, the update check
 keeps every machine you own honest about which commit is actually installed.
 
+If you want the flow **enforced** rather than merely intended, note that a repo created
+from a template starts with no branch protection and does not inherit rulesets. One call
+sets it up: pull requests required (no approvals, since you're solo), squash the only
+merge method, `main` safe from force-pushes and deletion, and no bypass for yourself:
+
+```bash
+gh api -X PATCH repos/<you>/<your-dotfiles> \
+  -F allow_merge_commit=false -F allow_rebase_merge=false -F delete_branch_on_merge=true
+
+gh api -X POST repos/<you>/<your-dotfiles>/rulesets --input - <<'JSON'
+{
+  "name": "main: PR + squash only",
+  "target": "branch",
+  "enforcement": "active",
+  "bypass_actors": [],
+  "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"], "exclude": []}},
+  "rules": [
+    {"type": "deletion"},
+    {"type": "non_fast_forward"},
+    {"type": "required_linear_history"},
+    {"type": "pull_request",
+     "parameters": {"required_approving_review_count": 0,
+                    "allowed_merge_methods": ["squash"]}}
+  ]
+}
+JSON
+```
+
+A direct push to `main` is then rejected with `Changes must be made through a pull
+request`. Add a `required_status_checks` rule too if you have CI. The trade-off is real:
+with no bypass actors, rewriting `main` later means temporarily setting the ruleset to
+`evaluate` and restoring it.
+
 ### Write PR titles as `<scope>: <subject>`
 
 If you squash-merge, the PR title becomes the commit subject verbatim, plus `(#N)`. That
